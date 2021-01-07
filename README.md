@@ -1,3 +1,22 @@
+# Requirements
+Install in your environment (Ex. Conda) the libraries related to PyTorch. 
+
+For example, if you are using conda, you can run the following commands:
+
+```shell
+conda install pytorch torchvision -c pytorch
+```
+
+If you are using a linux environmet, maybe this link can be useful https://timoast.github.io/blog/installing-pytorch/
+
+Other important requirement is the dataset. Please, download the following files and delete the lines with extra information that is not related to the dataset (name of columns, explanation of the dataset, etc in the initial lines and in the last line of each file).
+
+http://nanotera-stg2.epfl.ch/data/2019/Apr/01/2019-04-01_00h_UTC_PMUID01.txt
+
+http://nanotera-stg2.epfl.ch/data/2019/Apr/01/2019-04-01_00h_UTC_PMUID02.txt
+
+
+
 # RANslicing_forecasting
 Framework development based on 5G RAN Slicing premisses supporting Vertical protocols, such as IEC-61850
 
