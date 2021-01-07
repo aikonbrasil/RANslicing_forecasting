@@ -25,7 +25,7 @@ We have two well defined blocks to get numerical results. The first one is relat
 
 ## Forecasting
 ### Dataset description
-The start point is based on the elastic dataset to be used on the forecasting model. Two different scenarios where considered. These are deployed in forecasting_v1.ipynb and forecasting_v2.ipynb jupyter projects.
+The start point is based on the elastic dataset to be used on the forecasting model. Two different scenarios where considered. These are deployed in **forecasting_v1.ipynb** and **forecasting_v2.ipynb** jupyter projects.
 
 ![dataset, features, and labels](images/architecturedataset.png)
 
