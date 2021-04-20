@@ -16,19 +16,25 @@ data2 = numpy.loadtxt('2019-04-01_00h_UTC_PMUID02.txt')
 
 size_dataset = 500;
 mag_VA1 = data1[:size_dataset,6];
+mav_VA1phase = data1[:size_dataset,7];
 mag_IA1 = data1[:size_dataset,8];
-mag_VA2 = data2[:size_dataset,6];
-mag_IA2 = data2[:size_dataset,8];
+mav_IA1phase = data1[:size_dataset,9];
+
+mag_VA2 = data1[:size_dataset,6];
+mav_VA2phase = data1[:size_dataset,7];
+mag_IA2 = data1[:size_dataset,8];
+mav_IA2phase = data1[:size_dataset,9];
+
 import matplotlib.pyplot as plt
-plt.plot(mag_VA1)
-plt.plot(mag_VA2)
+#plt.plot(mag_VA1)
+#plt.plot(mag_VA2)
 
 
-plt.plot(mag_IA1)
-plt.plot(mag_IA2)
+#plt.plot(mag_IA1)
+#plt.plot(mag_IA2)
 
-info1 = numpy.column_stack([mag_VA1,mag_IA1])
-info2 = numpy.column_stack([mag_VA2,mag_IA2])
+info1 = numpy.column_stack([mag_VA1,mav_VA1phase,mag_IA1, mav_IA1phase])
+info2 = numpy.column_stack([mag_VA2,mav_VA2phase,mag_IA2, mav_IA2phase])
 
 unos = numpy.ones(info1.shape[0]);
 unos = unos.reshape(info1.shape[0],1);
@@ -75,7 +81,7 @@ print(len(train_data))
 print(len(test_data))
 
 
-train_data[:2,:]
+train_data[:4,:]
 
 
 from sklearn.preprocessing import MinMaxScaler
@@ -86,7 +92,7 @@ train_data_normalized = scaler.fit_transform(train_data)
 
 train_data_normalized[:10,:]
 
-train_data_normalized_tensor = torch.FloatTensor(train_data_normalized).view(size_train_data,3)
+train_data_normalized_tensor = torch.FloatTensor(train_data_normalized).view(size_train_data,5)
 #train_data_normalized = torch.FloatTensor(train_data_normalized).view(-1)
 
 train_data_normalized_tensor[:10,:]
@@ -98,9 +104,9 @@ def create_inout_sequences(input_data, tw):
     L = len(input_data)
     #L = input_data.shape[0]
     for i in range(L-tw):
-        train_seq = input_data[i:i+tw,:3]
+        train_seq = input_data[i:i+tw,:5]
         #train_seq = input_data[i:i+tw]
-        train_label = input_data[i+tw,2]
+        train_label = input_data[i+tw,4]
         #train_label = input_data[i+tw:i+tw+1]
         inout_seq.append((train_seq ,train_label))
     return inout_seq
@@ -108,12 +114,12 @@ def create_inout_sequences(input_data, tw):
 
 train_inout_seq = create_inout_sequences(train_data_normalized_tensor, train_window)
 
-train_inout_seq[:2]
+#train_inout_seq[:4]
 
 ### DEEP LEARNING ARCHITECTURE
 
 class LSTM(nn.Module):
-    def __init__(self, input_size=3, hidden_layer_size=100, output_size=1):
+    def __init__(self, input_size=5, hidden_layer_size=100, output_size=1):
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
 
@@ -121,7 +127,7 @@ class LSTM(nn.Module):
 
         self.linear = nn.Linear(hidden_layer_size, output_size)
 
-        self.hidden_cell = (torch.zeros(3,1,self.hidden_layer_size),
+        self.hidden_cell = (torch.zeros(5,1,self.hidden_layer_size),
                             torch.zeros(1,1,self.hidden_layer_size))
 
     def forward(self, input_seq):
@@ -134,7 +140,7 @@ model = LSTM()
 loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-epochs = 150
+epochs = 25
 
 for i in range(epochs):
     for seq, labels in train_inout_seq:
@@ -160,6 +166,7 @@ size_prediction = fut_pred
 #test_inputs = train_data_normalized[-2*train_window:-1*train_window]
 
 test_inputs = train_inout_seq[-size_prediction:]
+print(len(train_inout_seq))
 
 #print(test_inputs[0:20])
 
@@ -174,7 +181,8 @@ for i in range(fut_pred):
     seq = test_inputs[i][0]
     #seq = seq1[:train_window,:3]
     with torch.no_grad():
-        model.hidden = (torch.zeros(3, 1, model.hidden_layer_size),
+        model.hidden = (torch.zeros(5
+                                    , 1, model.hidden_layer_size),
                         torch.zeros(1, 1, model.hidden_layer_size))
         # The prediction  vector save the prediction of label in each iteration.
         prediction.append(model(seq).item())
@@ -190,9 +198,9 @@ prediction.shape
 # actual_predictions = scaler.inverse_transform(train_data_normalized[1:10,])
 # print(actual_predictions)
 
-prediction_full = numpy.column_stack([prediction, prediction, prediction])
+prediction_full = numpy.column_stack([prediction, prediction, prediction, prediction, prediction])
 
-prediction_full_tensor = torch.FloatTensor(prediction_full).view(size_prediction, 3)
+prediction_full_tensor = torch.FloatTensor(prediction_full).view(size_prediction, 5)
 
 actual_prediction = scaler.inverse_transform(prediction_full_tensor)
 
@@ -221,8 +229,8 @@ print(real_data)
 
 error = np.abs(real_data - prediction)
 print(np.sum(error)/size_prediction)
-print(np.sum(error))
 
+print(np.sum(error))
 
 
 
