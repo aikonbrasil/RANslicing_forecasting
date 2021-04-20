@@ -5,7 +5,13 @@ For example, if you are using conda, you can run the following commands:
 
 ```shell
 conda install pytorch torchvision -c pytorch
+
+python -m pip install seaborn
+
+pip install -U scikit-learn scipy matplotlib
 ```
+
+
 
 If you are using a linux environmet, maybe this link can be useful https://timoast.github.io/blog/installing-pytorch/
 
