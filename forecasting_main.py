@@ -145,7 +145,7 @@ epochs = 300
 for i in range(epochs):
     for seq, labels in train_inout_seq:
         optimizer.zero_grad()
-        model.hidden_cell = (torch.zeros(5, 1, model.hidden_layer_size),
+        model.hidden_cell = (torch.zeros(1, 1, model.hidden_layer_size),
                         torch.zeros(1, 1, model.hidden_layer_size))
 
         y_pred = model(seq)
@@ -176,7 +176,7 @@ for i in range(fut_pred):
     seq = test_inputs[i][0]
     #seq = seq1[:train_window,:3]
     with torch.no_grad():
-        model.hidden = (torch.zeros(5, 1, model.hidden_layer_size),
+        model.hidden = (torch.zeros(1, 1, model.hidden_layer_size),
                         torch.zeros(1, 1, model.hidden_layer_size))
         # The prediction  vector save the prediction of label in each iteration.
         prediction.append(model(seq).item())
