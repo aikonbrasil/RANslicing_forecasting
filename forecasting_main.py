@@ -4,6 +4,7 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 
 #cd /home/lut/Desktop/slicing_powersystems
@@ -20,10 +21,10 @@ mav_VA1phase = data1[:size_dataset,7];
 mag_IA1 = data1[:size_dataset,8];
 mav_IA1phase = data1[:size_dataset,9];
 
-mag_VA2 = data1[:size_dataset,6];
-mav_VA2phase = data1[:size_dataset,7];
-mag_IA2 = data1[:size_dataset,8];
-mav_IA2phase = data1[:size_dataset,9];
+mag_VA2 = data2[:size_dataset,6];
+mav_VA2phase = data2[:size_dataset,7];
+mag_IA2 = data2[:size_dataset,8];
+mav_IA2phase = data2[:size_dataset,9];
 
 import matplotlib.pyplot as plt
 #plt.plot(mag_VA1)
@@ -36,15 +37,16 @@ import matplotlib.pyplot as plt
 info1 = numpy.column_stack([mag_VA1,mav_VA1phase,mag_IA1, mav_IA1phase])
 info2 = numpy.column_stack([mag_VA2,mav_VA2phase,mag_IA2, mav_IA2phase])
 
+#Adding Extra columns for each message type: M1 and M2
 unos = numpy.ones(info1.shape[0]);
 unos = unos.reshape(info1.shape[0],1);
 label_1 = unos * 1;
 label_2 = unos * 2;
 
-
 info1 = numpy.column_stack([info1, label_1])
 info2 = numpy.column_stack([info2, label_2])
 
+# CREATING ELASTIC DATASET
 size_iteration = info1.shape[0];
 dataset = info1[:size_iteration, ] * 0;
 index1 = 0;
@@ -77,27 +79,27 @@ train_data = dataset[:-test_data_size,]
 size_train_data = len(train_data)
 test_data = dataset[-test_data_size:,]
 #test_data = dataset[-test_data_size:,2]
-print(len(train_data))
-print(len(test_data))
+#print(len(train_data))
+#print(len(test_data))
 
 
-train_data[:4,:]
-
-
-from sklearn.preprocessing import MinMaxScaler
+# SCALING THE DATASET between -1 and 1
 
 scaler = MinMaxScaler(feature_range=(-1, 1))
 train_data_normalized = scaler.fit_transform(train_data)
 #train_data_normalized = scaler.fit_transform(train_data.reshape(-1,1))
 
-train_data_normalized[:10,:]
+#train_data_normalized[:10,:]
 
 train_data_normalized_tensor = torch.FloatTensor(train_data_normalized).view(size_train_data,5)
 #train_data_normalized = torch.FloatTensor(train_data_normalized).view(-1)
 
-train_data_normalized_tensor[:10,:]
-
+# TRAINING WINDOW SIZE
 train_window=20
+
+# Choosing information to be used on the time series prediction
+# here we define what part of the dataset is the FEATURE information
+# and the LABEL or target information for the training session.
 
 def create_inout_sequences(input_data, tw):
     inout_seq = []
@@ -113,8 +115,6 @@ def create_inout_sequences(input_data, tw):
 
 
 train_inout_seq = create_inout_sequences(train_data_normalized_tensor, train_window)
-
-#train_inout_seq[:4]
 
 ### DEEP LEARNING ARCHITECTURE
 
@@ -145,7 +145,7 @@ epochs = 300
 for i in range(epochs):
     for seq, labels in train_inout_seq:
         optimizer.zero_grad()
-        model.hidden_cell = (torch.zeros(1, 1, model.hidden_layer_size),
+        model.hidden_cell = (torch.zeros(5, 1, model.hidden_layer_size),
                         torch.zeros(1, 1, model.hidden_layer_size))
 
         y_pred = model(seq)
@@ -159,17 +159,12 @@ for i in range(epochs):
 
 print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
-
+#EVALUATING TRAINED MODEL
+#(ToDo: use the TEST vector)
 fut_pred = 400
 size_prediction = fut_pred
-#test_inputs = train_data_normalized[-train_window:].tolist()
-#test_inputs = train_data_normalized[-2*train_window:-1*train_window]
 
 test_inputs = train_inout_seq[-size_prediction:]
-print(len(train_inout_seq))
-
-#print(test_inputs[0:20])
-
 
 model.eval()
 
@@ -186,17 +181,13 @@ for i in range(fut_pred):
                         torch.zeros(1, 1, model.hidden_layer_size))
         # The prediction  vector save the prediction of label in each iteration.
         prediction.append(model(seq).item())
-        #model(seq).item()
-       # test_inputs.append(model(seq).item())
-        #print(model(seq).item())
-
 
 prediction = numpy.array(prediction)
 prediction = prediction.reshape(fut_pred,1)
 prediction.shape
 
-# actual_predictions = scaler.inverse_transform(train_data_normalized[1:10,])
-# print(actual_predictions)
+# RE-Scaling the predicted information
+#
 
 prediction_full = numpy.column_stack([prediction, prediction, prediction, prediction, prediction])
 
@@ -205,25 +196,17 @@ prediction_full_tensor = torch.FloatTensor(prediction_full).view(size_prediction
 actual_prediction = scaler.inverse_transform(prediction_full_tensor)
 
 for i in range(size_prediction):
-    if actual_prediction[i, 2] > 1.5:
-        actual_prediction[i, 2] = 2
+    if actual_prediction[i, 4] > 1.5:
+        actual_prediction[i, 4] = 2
     else:
-        actual_prediction[i, 2] = 1
+        actual_prediction[i, 4] = 1
 
-prediction = actual_prediction[:, 2];
+prediction = actual_prediction[:, 4];
 print(prediction)
-
-# for ii in range(10):
-#    train_data_normalized[ii,2] = float(prediction[ii])
-
-# actual_predictions = scaler.inverse_transform(train_data_normalized[1:10,])
-# print(actual_predictions)
-
-# print(train_data_normalized[0:20,])
 
 
 # Real Data
-real_data = train_data[-size_prediction:,2]
+real_data = train_data[-size_prediction:,4]
 print(real_data)
 
 
