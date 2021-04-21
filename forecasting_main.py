@@ -106,7 +106,7 @@ def create_inout_sequences(input_data, tw):
     L = len(input_data)
     #L = input_data.shape[0]
     for i in range(L-tw):
-        train_seq = input_data[i:i+tw,:5]
+        train_seq = input_data[i:i+tw,:4]
         #train_seq = input_data[i:i+tw]
         train_label = input_data[i+tw,4]
         #train_label = input_data[i+tw:i+tw+1]
@@ -119,7 +119,7 @@ train_inout_seq = create_inout_sequences(train_data_normalized_tensor, train_win
 ### DEEP LEARNING ARCHITECTURE
 
 class LSTM(nn.Module):
-    def __init__(self, input_size=5, hidden_layer_size=100, output_size=1):
+    def __init__(self, input_size=4, hidden_layer_size=100, output_size=1):
         super().__init__()
         self.hidden_layer_size = hidden_layer_size
 
@@ -127,7 +127,7 @@ class LSTM(nn.Module):
 
         self.linear = nn.Linear(hidden_layer_size, output_size)
 
-        self.hidden_cell = (torch.zeros(5,1,self.hidden_layer_size),
+        self.hidden_cell = (torch.zeros(4,1,self.hidden_layer_size),
                             torch.zeros(1,1,self.hidden_layer_size))
 
     def forward(self, input_seq):
@@ -140,7 +140,7 @@ model = LSTM()
 loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-epochs = 300
+epochs = 100
 
 for i in range(epochs):
     for seq, labels in train_inout_seq:
@@ -161,7 +161,7 @@ print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
 #EVALUATING TRAINED MODEL
 #(ToDo: use the TEST vector)
-fut_pred = 400
+fut_pred = 20
 size_prediction = fut_pred
 
 test_inputs = train_inout_seq[-size_prediction:]
@@ -187,12 +187,13 @@ prediction.shape
 
 # RE-Scaling the predicted information
 #
-
 prediction_full = numpy.column_stack([prediction, prediction, prediction, prediction, prediction])
 
 prediction_full_tensor = torch.FloatTensor(prediction_full).view(size_prediction, 5)
 
 actual_prediction = scaler.inverse_transform(prediction_full_tensor)
+
+actual_prediction_ref = actual_prediction
 
 for i in range(size_prediction):
     if actual_prediction[i, 4] > 1.5:
@@ -200,8 +201,8 @@ for i in range(size_prediction):
     else:
         actual_prediction[i, 4] = 1
 
-prediction = actual_prediction[:, 4];
-print(prediction)
+prediction_end = actual_prediction[:, 4];
+print(prediction_end)
 
 
 # Real Data
@@ -209,11 +210,7 @@ real_data = train_data[-size_prediction:,4]
 print(real_data)
 
 
-error = np.abs(real_data - prediction)
+error = np.abs(real_data - prediction_end)
 print(np.sum(error)/size_prediction)
 
 print(np.sum(error))
-
-
-
-
