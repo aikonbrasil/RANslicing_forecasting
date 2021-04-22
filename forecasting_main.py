@@ -157,8 +157,12 @@ for i in range(epochs):
             if value_aux == 1.0:
                 print(y_pred)
                 print(labels)
+
         single_loss.backward()
         optimizer.step()
+    if single_loss.item() < 0.000001:
+        print('time to pull...')
+        break
 
     if i%1 == 0:
         print(f'epoch: {i:3} loss: {single_loss.item():10.8f}')
