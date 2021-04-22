@@ -254,7 +254,7 @@ print(prediction_end)
 
 
 # Real Data
-real_data = train_data[-size_prediction:,4]
+real_data = test_data[-size_prediction:,4]
 print(real_data)
 
 
