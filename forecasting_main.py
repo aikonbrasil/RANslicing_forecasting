@@ -79,6 +79,7 @@ train_data = dataset[:-test_data_size,]
 #train_data = dataset[:-test_data_size,2]
 size_train_data = len(train_data)
 test_data = dataset[-test_data_size:,]
+size_test_data = len(test_data)
 #test_data = dataset[-test_data_size:,2]
 #print(len(train_data))
 #print(len(test_data))
@@ -88,11 +89,13 @@ test_data = dataset[-test_data_size:,]
 
 scaler = MinMaxScaler(feature_range=(-1, 1))
 train_data_normalized = scaler.fit_transform(train_data)
+test_data_normalized = scaler.fit_transform(test_data)
 #train_data_normalized = scaler.fit_transform(train_data.reshape(-1,1))
 
 #train_data_normalized[:10,:]
 
 train_data_normalized_tensor = torch.FloatTensor(train_data_normalized).view(size_train_data,5)
+test_data_normalized_tensor = torch.FloatTensor(test_data_normalized).view(size_test_data,5)
 #train_data_normalized = torch.FloatTensor(train_data_normalized).view(-1)
 
 # TRAINING WINDOW SIZE
@@ -116,6 +119,7 @@ def create_inout_sequences(input_data, tw):
 
 
 train_inout_seq = create_inout_sequences(train_data_normalized_tensor, train_window)
+test_inout_seq = create_inout_sequences(test_data_normalized_tensor, train_window)
 
 ### DEEP LEARNING ARCHITECTURE
 
@@ -197,10 +201,10 @@ print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
 #EVALUATING TRAINED MODEL
 #(ToDo: use the TEST vector)
-fut_pred = 100
+fut_pred = 25
 size_prediction = fut_pred
 
-test_inputs = train_inout_seq[-size_prediction:]
+test_inputs = test_inout_seq[-size_prediction:]
 #test_inputs = train_inout_seq[:size_prediction]
 
 model.eval()
