@@ -145,7 +145,7 @@ model = LSTM()
 loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-epochs = 50
+epochs = 250
 
 for i in range(epochs):
     for seq, labels in train_inout_seq:
@@ -262,3 +262,70 @@ error = np.abs(real_data - prediction_end)
 print(np.sum(error)/size_prediction)
 
 print(np.sum(error))
+
+
+####### evaluating with data used for training
+print(' **** using data used for training ****')
+
+fut_pred = 50
+size_prediction = fut_pred
+
+test_inputs = train_inout_seq[-size_prediction:]
+#test_inputs = train_inout_seq[:size_prediction]
+
+model.eval()
+
+#train_data_normalized = torch.FloatTensor(train_data_normalized).view(size_train_data,3)
+ #train_seq = input_data[i:i+tw,:3]
+prediction = [];
+for i in range(fut_pred):
+    #we consider train_window window size to do the prediction
+    seq = test_inputs[i][0]
+    labell= test_inputs[i][1]
+    #seq = seq1[:train_window,:3]
+    with torch.no_grad():
+        model.hidden = (torch.zeros(1, 1, model.hidden_layer_size),
+                        torch.zeros(1, 1, model.hidden_layer_size))
+        # The prediction  vector save the prediction of label in each iteration.
+        prediction.append(model(seq).item())
+        single_loss = loss_function(model(seq), labell)
+     #   print('++ new info ++')
+     #   print(seq)
+     #   print(labell)
+     #   print(model(seq).item())
+     #   print(single_loss)
+
+prediction = numpy.array(prediction)
+prediction = prediction.reshape(fut_pred,1)
+prediction.shape
+
+# RE-Scaling the predicted information
+#
+prediction_full = numpy.column_stack([prediction, prediction, prediction, prediction, prediction])
+
+prediction_full_tensor = torch.FloatTensor(prediction_full).view(size_prediction, 5)
+
+actual_prediction = scaler.inverse_transform(prediction_full_tensor)
+
+actual_prediction_ref = actual_prediction
+
+for i in range(size_prediction):
+    if actual_prediction[i, 4] > 1.5:
+        actual_prediction[i, 4] = 2
+    else:
+        actual_prediction[i, 4] = 1
+
+prediction_end = actual_prediction[:, 4];
+print(prediction_end)
+
+
+# Real Data
+real_data = train_data[-size_prediction:,4]
+print(real_data)
+
+error = np.abs(real_data - prediction_end)
+print(np.sum(error)/size_prediction)
+
+print(np.sum(error))
+
+
