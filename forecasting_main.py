@@ -152,7 +152,7 @@ for i in range(epochs):
         y_pred = model(seq)
 
         single_loss = loss_function(y_pred, labels)
-        if False:
+        if True:
             value_aux = labels.item();
             if value_aux == 1.0:
                 print(y_pred)
