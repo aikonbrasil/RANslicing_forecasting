@@ -141,7 +141,7 @@ model = LSTM()
 loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-epochs = 100
+epochs = 10
 
 for i in range(epochs):
     for seq, labels in train_inout_seq:
@@ -180,12 +180,15 @@ prediction = [];
 for i in range(fut_pred):
     #we consider train_window window size to do the prediction
     seq = test_inputs[i][0]
+    labell= test_inputs[i][1]
     #seq = seq1[:train_window,:3]
     with torch.no_grad():
         model.hidden = (torch.zeros(1, 1, model.hidden_layer_size),
                         torch.zeros(1, 1, model.hidden_layer_size))
         # The prediction  vector save the prediction of label in each iteration.
         prediction.append(model(seq).item())
+        print(labell)
+        print(model(seq).item())
 
 prediction = numpy.array(prediction)
 prediction = prediction.reshape(fut_pred,1)
