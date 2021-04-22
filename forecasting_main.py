@@ -56,7 +56,7 @@ for ii in range(size_iteration):
     # TO GET A RANDOM GENERATION OF EVENT 2
     s = numpy.random.uniform(0, 1, 1)
     s = 0.8;
-    if s > 0.5:
+    if s < 0.5:
         step = 3
     elif s < 0.75:
         step = 5
@@ -152,10 +152,11 @@ for i in range(epochs):
         y_pred = model(seq)
 
         single_loss = loss_function(y_pred, labels)
-        #value_aux = labels.item();
-        #if value_aux == 1.0:
-        #    print(y_pred)
-        #    print(labels)
+        if False:
+            value_aux = labels.item();
+            if value_aux == 1.0:
+                print(y_pred)
+                print(labels)
         single_loss.backward()
         optimizer.step()
 
