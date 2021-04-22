@@ -167,11 +167,11 @@ print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
 #EVALUATING TRAINED MODEL
 #(ToDo: use the TEST vector)
-fut_pred = 20
+fut_pred = 1
 size_prediction = fut_pred
 
-#test_inputs = train_inout_seq[-size_prediction:]
-test_inputs = train_inout_seq[:size_prediction]
+test_inputs = train_inout_seq[-size_prediction:]
+#test_inputs = train_inout_seq[:size_prediction]
 
 model.eval()
 
@@ -189,7 +189,9 @@ for i in range(fut_pred):
         # The prediction  vector save the prediction of label in each iteration.
         prediction.append(model(seq).item())
         single_loss = loss_function(model(seq), labell)
+        print('++ new info ++')
         print(labell)
+        print(seq)
         print(model(seq).item())
         print(single_loss)
 
