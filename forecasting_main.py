@@ -160,12 +160,38 @@ for i in range(epochs):
 
         single_loss.backward()
         optimizer.step()
-    if single_loss.item() < 0.000001:
-        print('time to pull...')
-        break
 
     if i%1 == 0:
         print(f'epoch: {i:3} loss: {single_loss.item():10.8f}')
+
+# RE_TRAIN AGAIN IN CASE OF it is not converging
+if single_loss.item() > 0.01:
+    print('ENTERING TO A NEW RE TRAINING')
+    epochs = 2*epochs;
+    for i in range(epochs):
+        for seq, labels in train_inout_seq:
+            optimizer.zero_grad()
+            model.hidden_cell = (torch.zeros(1, 1, model.hidden_layer_size),
+                                 torch.zeros(1, 1, model.hidden_layer_size))
+
+            y_pred = model(seq)
+
+            single_loss = loss_function(y_pred, labels)
+            if False:
+                value_aux = labels.item()
+                if value_aux == 1.0:
+                    print(y_pred)
+                    print(labels)
+
+            single_loss.backward()
+            optimizer.step()
+        if single_loss.item() < 0.000001: 0.00001253
+        print('time to pull...')
+        break
+
+    if i % 1 == 0:
+        print(f'epoch: {i:3} loss: {single_loss.item():10.8f}')
+
 
 print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
