@@ -61,7 +61,7 @@ for ii in range(size_iteration):
     elif s < 0.75:
         step = 5
     else:
-        step = 7
+        step = 6
 
     # Generation of elastic dataset
     trigger = numpy.remainder(ii, 10);
@@ -96,7 +96,7 @@ train_data_normalized_tensor = torch.FloatTensor(train_data_normalized).view(siz
 #train_data_normalized = torch.FloatTensor(train_data_normalized).view(-1)
 
 # TRAINING WINDOW SIZE
-train_window=10
+train_window=40
 
 # Choosing information to be used on the time series prediction
 # here we define what part of the dataset is the FEATURE information
@@ -153,7 +153,7 @@ for i in range(epochs):
 
         single_loss = loss_function(y_pred, labels)
         if False:
-            value_aux = labels.item();
+            value_aux = labels.item()
             if value_aux == 1.0:
                 print(y_pred)
                 print(labels)
@@ -190,8 +190,8 @@ for i in range(fut_pred):
         prediction.append(model(seq).item())
         single_loss = loss_function(model(seq), labell)
         print('++ new info ++')
-        print(labell)
         print(seq)
+        print(labell)
         print(model(seq).item())
         print(single_loss)
 
