@@ -15,7 +15,7 @@ data1 = numpy.loadtxt('2019-04-01_00h_UTC_PMUID01.txt')
 data2 = numpy.loadtxt('2019-04-01_00h_UTC_PMUID02.txt')
 
 
-size_dataset = 5000;
+size_dataset = 500;
 mag_VA1 = data1[:size_dataset,6];
 mav_VA1phase = data1[:size_dataset,7];
 mag_IA1 = data1[:size_dataset,8];
@@ -27,12 +27,6 @@ mag_IA2 = data2[:size_dataset,8];
 mav_IA2phase = data2[:size_dataset,9];
 
 import matplotlib.pyplot as plt
-#plt.plot(mag_VA1)
-#plt.plot(mag_VA2)
-
-
-#plt.plot(mag_IA1)
-#plt.plot(mag_IA2)
 
 info1 = numpy.column_stack([mag_VA1,mav_VA1phase,mag_IA1, mav_IA1phase])
 info2 = numpy.column_stack([mag_VA2,mav_VA2phase,mag_IA2, mav_IA2phase])
@@ -54,6 +48,7 @@ index2 = 0;
 for ii in range(size_iteration):
 
     # TO GET A RANDOM GENERATION OF EVENT 2
+    # After sequence 6, all values are message 2
     s = numpy.random.uniform(0, 1, 1)
     s = 0.8;
     if s < 0.5:
@@ -76,13 +71,10 @@ for ii in range(size_iteration):
 test_data_size = 100;
 
 train_data = dataset[:-test_data_size,]
-#train_data = dataset[:-test_data_size,2]
+
 size_train_data = len(train_data)
 test_data = dataset[-test_data_size:,]
 size_test_data = len(test_data)
-#test_data = dataset[-test_data_size:,2]
-#print(len(train_data))
-#print(len(test_data))
 
 
 # SCALING THE DATASET between -1 and 1
@@ -90,13 +82,10 @@ size_test_data = len(test_data)
 scaler = MinMaxScaler(feature_range=(-1, 1))
 train_data_normalized = scaler.fit_transform(train_data)
 test_data_normalized = scaler.fit_transform(test_data)
-#train_data_normalized = scaler.fit_transform(train_data.reshape(-1,1))
 
-#train_data_normalized[:10,:]
 
 train_data_normalized_tensor = torch.FloatTensor(train_data_normalized).view(size_train_data,5)
 test_data_normalized_tensor = torch.FloatTensor(test_data_normalized).view(size_test_data,5)
-#train_data_normalized = torch.FloatTensor(train_data_normalized).view(-1)
 
 # TRAINING WINDOW SIZE
 train_window=40
