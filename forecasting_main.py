@@ -167,7 +167,7 @@ print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
 #EVALUATING TRAINED MODEL
 #(ToDo: use the TEST vector)
-fut_pred = 1
+fut_pred = 5
 size_prediction = fut_pred
 
 test_inputs = train_inout_seq[-size_prediction:]
