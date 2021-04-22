@@ -253,4 +253,5 @@ for iterationmain in range(5):
         torch.save(model.state_dict(),path)
 
 print(vector_error)
+np.savetxt('output_error.txt', vector_error, delimiter=',')
 
