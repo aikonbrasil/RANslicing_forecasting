@@ -96,7 +96,7 @@ train_data_normalized_tensor = torch.FloatTensor(train_data_normalized).view(siz
 #train_data_normalized = torch.FloatTensor(train_data_normalized).view(-1)
 
 # TRAINING WINDOW SIZE
-train_window=20
+train_window=10
 
 # Choosing information to be used on the time series prediction
 # here we define what part of the dataset is the FEATURE information
@@ -152,7 +152,7 @@ for i in range(epochs):
         y_pred = model(seq)
 
         single_loss = loss_function(y_pred, labels)
-        if True:
+        if False:
             value_aux = labels.item();
             if value_aux == 1.0:
                 print(y_pred)
@@ -170,7 +170,8 @@ print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 fut_pred = 20
 size_prediction = fut_pred
 
-test_inputs = train_inout_seq[-size_prediction:]
+#test_inputs = train_inout_seq[-size_prediction:]
+test_inputs = train_inout_seq[:size_prediction]
 
 model.eval()
 
@@ -187,8 +188,10 @@ for i in range(fut_pred):
                         torch.zeros(1, 1, model.hidden_layer_size))
         # The prediction  vector save the prediction of label in each iteration.
         prediction.append(model(seq).item())
+        single_loss = loss_function(model(seq), labell)
         print(labell)
         print(model(seq).item())
+        print(single_loss)
 
 prediction = numpy.array(prediction)
 prediction = prediction.reshape(fut_pred,1)
