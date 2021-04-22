@@ -73,7 +73,7 @@ for ii in range(size_iteration):
         index1 = index1 + 1;
     # dataset.shape
 
-test_data_size = 50;
+test_data_size = 100;
 
 train_data = dataset[:-test_data_size,]
 #train_data = dataset[:-test_data_size,2]
@@ -201,7 +201,7 @@ print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
 #EVALUATING TRAINED MODEL
 #(ToDo: use the TEST vector)
-fut_pred = 8
+fut_pred = 50
 size_prediction = fut_pred
 
 test_inputs = test_inout_seq[-size_prediction:]
