@@ -15,7 +15,7 @@ data1 = numpy.loadtxt('2019-04-01_00h_UTC_PMUID01.txt')
 data2 = numpy.loadtxt('2019-04-01_00h_UTC_PMUID02.txt')
 
 
-size_dataset = 5000;
+size_dataset = 500;
 mag_VA1 = data1[:size_dataset,6];
 mav_VA1phase = data1[:size_dataset,7];
 mag_IA1 = data1[:size_dataset,8];
