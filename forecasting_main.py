@@ -165,7 +165,7 @@ for i in range(epochs):
         print(f'epoch: {i:3} loss: {single_loss.item():10.8f}')
 
 # RE_TRAIN AGAIN IN CASE OF it is not converging
-if single_loss.item() > 0.01:
+if single_loss.item() > 0.001:
     print('ENTERING TO A NEW RE TRAINING')
     epochs = 2*epochs;
     for i in range(epochs):
@@ -185,7 +185,7 @@ if single_loss.item() > 0.01:
 
             single_loss.backward()
             optimizer.step()
-        if single_loss.item() < 0.000001: 0.00001253
+        if single_loss.item() < 0.000001:
         print('time to pull...')
         break
 
@@ -197,7 +197,7 @@ print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
 
 #EVALUATING TRAINED MODEL
 #(ToDo: use the TEST vector)
-fut_pred = 20
+fut_pred = 100
 size_prediction = fut_pred
 
 test_inputs = train_inout_seq[-size_prediction:]
