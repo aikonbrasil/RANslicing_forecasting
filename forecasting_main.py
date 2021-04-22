@@ -65,7 +65,7 @@ for ii in range(size_iteration):
 
     # Generation of elastic dataset
     trigger = numpy.remainder(ii, 10);
-    if trigger == step:
+    if trigger > step:
         dataset[ii,] = info2[index2,]
         index2 = index2 + 1;
     else:
