@@ -141,7 +141,7 @@ model = LSTM()
 loss_function = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-epochs = 10
+epochs = 50
 
 for i in range(epochs):
     for seq, labels in train_inout_seq:
