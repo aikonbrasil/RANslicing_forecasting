@@ -35,7 +35,8 @@ import matplotlib.pyplot as plt
 for windowsval in range(10,60,5):
     vector_error = []
     for iterationmain in range(100):
-        print('Windows For Training/Testing ' + str(windowsval)+'  Iteration '+str(iterationmain))
+        print('   ')
+        print('*** Windows For Training/Testing =' + str(windowsval)+'  Iteration ='+str(iterationmain)+' ***')
         info1 = numpy.column_stack([mag_VA1, mav_VA1phase, mag_IA1, mav_IA1phase])
         info2 = numpy.column_stack([mag_VA2, mav_VA2phase, mag_IA2, mav_IA2phase])
         # Adding Extra columns for each message type: M1 and M2
