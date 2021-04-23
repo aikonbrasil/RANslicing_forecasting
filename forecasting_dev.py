@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 for windowsval in range(10,60,5):
     vector_error = []
     for iterationmain in range(100):
-
+        print('Windows For Training/Testing ' + str(windowsval)+'  Iteration '+str(iterationmain))
         info1 = numpy.column_stack([mag_VA1, mav_VA1phase, mag_IA1, mav_IA1phase])
         info2 = numpy.column_stack([mag_VA2, mav_VA2phase, mag_IA2, mav_IA2phase])
         # Adding Extra columns for each message type: M1 and M2
@@ -190,7 +190,7 @@ for windowsval in range(10,60,5):
                     print('time to pull...')
                     break
 
-            if i % 1 == 0:
+            if i % 25== 0:
                 print(f'epoch: {i:3} loss: {single_loss.item():10.8f}')
 
         print(f'epoch: {i:3} loss: {single_loss.item():10.10f}')
