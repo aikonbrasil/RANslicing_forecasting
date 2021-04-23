@@ -142,7 +142,7 @@ for windowsval in range(10,60,5):
         loss_function = nn.MSELoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-        epochs = 1
+        epochs = 50
 
         for i in range(epochs):
             for seq, labels in train_inout_seq:
@@ -166,7 +166,7 @@ for windowsval in range(10,60,5):
                 print(f'epoch: {i:3} loss: {single_loss.item():10.8f}')
 
         # RE_TRAIN AGAIN IN CASE OF it is not converging
-        if single_loss.item() > 1:
+        if single_loss.item() > 0.01:
             print('ENTERING TO A NEW RE TRAINING')
             epochs = 2 * epochs;
             for i in range(epochs):
@@ -256,6 +256,6 @@ for windowsval in range(10,60,5):
             torch.save(model.state_dict(),path)
 
     print(vector_error)
-    namefile = 'output_error_'+'wval'+ str(train_window)+'.txt'
+    namefile = './output/output_error_'+'wval'+ str(train_window)+'.txt'
     np.savetxt(namefile, vector_error, delimiter=',')
 
