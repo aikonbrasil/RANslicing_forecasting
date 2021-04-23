@@ -162,7 +162,7 @@ for windowsval in range(10,60,5):
                 single_loss.backward()
                 optimizer.step()
 
-            if i % 1 == 0:
+            if i % 1 == 10:
                 print(f'epoch: {i:3} loss: {single_loss.item():10.8f}')
 
         # RE_TRAIN AGAIN IN CASE OF it is not converging
